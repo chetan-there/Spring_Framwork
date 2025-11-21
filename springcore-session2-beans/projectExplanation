@@ -1,0 +1,98 @@
+1️ Concept: @Configuration + @ComponentScan
+📌 Code (AppConfig.java)
+@Configuration
+@ComponentScan("com.ct")
+public class AppConfig {
+}
+
+🔍 Explanation
+
+@Configuration → Marks this class as a Spring configuration class.
+
+@ComponentScan("com.ct") → Tells Spring to scan all packages under com.ct for @Component classes.
+
+Spring will automatically create beans for SingletonBean and PrototypeBean.
+
+🎯 What You Learn
+
+✔ How Spring detects and creates beans automatically
+✔ How to configure Spring using Java-based configuration
+
+2️ Concept: Singleton Scope (Default Bean Scope)
+📌 Code (SingletonBean.java)
+@Component
+public class SingletonBean {
+
+    public SingletonBean() {
+        System.out.println("Singleton bean created");
+    }
+}
+
+🔍 Explanation
+
+@Component registers this class as a Spring bean.
+
+Spring automatically creates only one object of this bean when the container starts.
+
+Calling getBean() multiple times returns the same instance.
+
+🎯 What You Learn
+
+✔ Singleton is the default scope in Spring
+✔ Only one object is created for the entire application
+
+3️ Concept: Prototype Scope (New Object Each Time)
+📌 Code (PrototypeBean.java)
+@Component
+@Scope("prototype")
+public class PrototypeBean {
+
+    public PrototypeBean() {
+        System.out.println("Prototype bean created");
+    }
+}
+
+🔍 Explanation
+
+@Scope("prototype") → Tells Spring to create a new object every time getBean() is called.
+
+Spring does NOT create prototype beans at startup.
+Bean is created only when you call getBean().
+
+🎯 What You Learn
+
+✔ Prototype scope creates a fresh object every request
+✔ Useful for stateful objects or multi-user temporary objects
+
+4️ Concept: Testing Scope Behaviour
+📌 Code (MainApp.java)
+ApplicationContext context = 
+        new AnnotationConfigApplicationContext(AppConfig.class);
+
+System.out.println("-------Singleton Test------------");
+SingletonBean s1 = context.getBean(SingletonBean.class);
+SingletonBean s2 = context.getBean(SingletonBean.class);
+System.out.println(s1 == s2);   // true
+
+System.out.println("-------Prototype Test------------");
+PrototypeBean p1 = context.getBean(PrototypeBean.class);
+PrototypeBean p2 = context.getBean(PrototypeBean.class);
+System.out.println(p1 == p2);   // false
+
+🔍 Explanation
+🔵 Singleton Test
+
+Spring creates one object.
+
+Both s1 and s2 point to same memory address → true.
+
+🔵 Prototype Test
+
+Spring creates new object each time.
+
+p1 and p2 have different memory addresses → false.
+
+🎯 What You Learn
+
+✔ Practical behavior of bean scopes
+✔ How to verify object identity using ==
