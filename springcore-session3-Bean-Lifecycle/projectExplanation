@@ -1,0 +1,125 @@
+⭐ Topic Covered: Spring Bean Life Cycle (Full Flow)
+
+This project demonstrates all stages of a Spring Bean Life Cycle, including:
+
+✔ Constructor
+✔ @PostConstruct
+✔ InitializingBean (afterPropertiesSet)
+✔ Custom init method
+✔ @PreDestroy
+✔ DisposableBean (destroy)
+✔ Custom destroy method
+✔ Shutdown hook
+🔥 1️ LifeCycleBean Class (Main Life Cycle Demonstration)
+📌 Constructor
+public LifeCycleBean() {
+    System.out.println("1️⃣ Constructor called: Bean Instantiated");
+}
+
+
+✔ When the bean object is created.
+
+📌 @PostConstruct
+@PostConstruct
+public void postConstructMethod() {
+    System.out.println("2️⃣ @PostConstruct: Bean Initialization #1");
+}
+
+
+✔ Runs immediately after dependency injection, before the bean is ready for use.
+
+📌 InitializingBean interface
+@Override
+public void afterPropertiesSet() {
+    System.out.println("3️⃣ afterPropertiesSet(): InitializingBean #2");
+}
+
+
+✔ Another initialization callback
+✔ Spring calls it after @PostConstruct
+
+📌 Custom init method
+public void customInit() {
+    System.out.println("4️⃣ custom init-method(): Initialization #3");
+}
+
+
+✔ If configured in @Bean(initMethod = “customInit”) (but you forgot to use it in AppConfig)
+
+📌 @PreDestroy
+@PreDestroy
+public void preDestroyMethod() {
+    System.out.println("5️⃣ @PreDestroy: Bean Destroy Start");
+}
+
+
+✔ Called automatically when context closes.
+
+📌 DisposableBean destroy()
+@Override
+public void destroy() {
+    System.out.println("6️⃣ destroy(): DisposableBean");
+}
+
+
+✔ Another destroy callback (after @PreDestroy)
+
+📌 Custom destroy method
+public void customDestroy() {
+    System.out.println("7️⃣ custom destroy-method(): Final Destroy");
+}
+
+
+✔ Called only if registered in @Bean(destroyMethod = “customDestroy”)
+
+🔥 2️ AppConfig Explained
+@ComponentScan("com.ct")
+@Configuration
+public class AppConfig {
+
+    public LifeCycleBean lifecyclebean() {
+        return new LifeCycleBean();
+    }
+}
+
+
+❗ Issue: You forgot @Bean annotation.
+
+Correct version should be:
+
+@Bean(initMethod="customInit", destroyMethod="customDestroy")
+public LifeCycleBean lifecyclebean() {
+    return new LifeCycleBean();
+}
+
+🔥 3️ MainApp Explanation
+AnnotationConfigApplicationContext context =
+        new AnnotationConfigApplicationContext(AppConfig.class);
+
+
+✔ Creates Spring container
+✔ Automatically detects LifeCycleBean
+
+LifeCycleBean b1 = context.getBean(LifeCycleBean.class);
+
+
+✔ Bean is created → all initialization phases run.
+
+context.registerShutdownHook();
+
+
+✔ Ensures Spring closes properly → destroy methods run
+✔ Calls @PreDestroy, destroy(), customDestroy()
+
+🎯 Bean LifeCycle Output Flow (Order)
+
+Expected order:
+
+1️⃣ Constructor
+2️⃣ @PostConstruct
+3️⃣ afterPropertiesSet()
+4️⃣ custom init method (if configured)
+--- Bean is ready to use ---
+5️⃣ @PreDestroy
+6️⃣ destroy()
+7️⃣ custom destroy method (if configured)
