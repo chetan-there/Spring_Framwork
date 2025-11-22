@@ -1,0 +1,165 @@
+🌟 Full Workflow of the Project (From Start to End)
+
+This is exactly what happens inside Spring when your project runs.
+
+1️⃣ Your Project Starts With Main Class
+ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+
+This line does 4 Major Things Automatically:
+
+✔ Loads AppConfig
+✔ Scans all classes in com.ct package
+✔ Creates objects (@Component classes)
+✔ Injects dependencies (@Autowired)
+2️⃣ Spring Reads AppConfig
+@Configuration
+@ComponentScan("com.ct")
+public class AppConfig {}
+
+
+This tells Spring:
+
+"Scan com.ct package and find classes with @Component."
+
+So Spring searches in folders:
+
+com.ct.car
+com.ct.engine
+com.ct.config
+...
+
+3️⃣ Spring Finds Components and Creates Beans
+
+It finds these:
+
+✔ Car
+✔ PetrolEngine
+✔ DieselEngine
+
+Since they all have:
+
+@Component
+
+
+Spring creates objects (beans) for each.
+
+So memory looks like:
+
+PetrolEngine object created
+DieselEngine object created
+Car object created (waiting for Engine)
+
+4️⃣ Spring Looks at Car Constructor
+
+Your Car class has:
+
+public Car(Engine engine) { }
+
+
+This means:
+
+“Car needs an Engine object.”
+
+Spring tries to inject Engine.
+
+But problem:
+
+There are 2 engines:
+
+petrolEngine
+
+dieselEngine
+
+So Spring becomes confused 😵‍💫 and throws:
+
+❌ NoUniqueBeanDefinitionException
+
+Because it doesn’t know which Engine Car wants.
+
+5️⃣ You Fix Ambiguity Using @Qualifier
+public Car(@Qualifier("dieselEngine") Engine engine) {
+    this.engine = engine;
+}
+
+
+Now Spring knows:
+
+“Car must use dieselEngine.”
+
+So it injects that engine into Car.
+
+Workflow:
+
+Car needs Engine
+→ Use Qualifier
+→ Select dieselEngine
+→ Inject dieselEngine into Car
+
+
+Car object is now fully ready.
+
+6️⃣ Bean is Ready & Dependency Injection is Complete
+
+Now memory looks like:
+
+Car ---> DieselEngine
+
+7️⃣ MainApp Gets Car Bean
+Car c = context.getBean(Car.class);
+
+
+This gives you the Car object with the correct Engine.
+
+Calling:
+
+c.startCar();
+
+
+Outputs:
+
+Diesel engine started...
+Car is running...
+
+🔥 COMPLETE WORKFLOW DIAGRAM
+MainApp
+  ↓
+AppConfig
+  ↓
+@ComponentScan("com.ct")
+  ↓
+Spring finds Components:
+    - Car
+    - PetrolEngine
+    - DieselEngine
+  ↓
+Spring creates engine beans
+  ↓
+Car needs Engine → @Autowired
+  ↓
+Multiple engines found → confusion
+  ↓
+@Qualifier("dieselEngine")
+  ↓
+Spring injects DieselEngine into Car
+  ↓
+Car object ready
+  ↓
+MainApp gets Car bean and runs it
+
+✔ YOUR UNDERSTANDING SHOULD NOW BE CLEAR
+You learned:
+
+How Spring scans components
+
+How beans are created
+
+How DI works
+
+How @Autowired works
+
+Why error occurred
+
+How @Qualifier solved it
+
+How the whole workflow executes

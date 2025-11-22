@@ -1,0 +1,179 @@
+🚗 PROJECT OVERVIEW (Simplest Explanation)
+
+You created a Car project that has:
+
+A Car
+
+Two types of engines: PetrolEngine and DieselEngine
+
+An Engine interface (parent type)
+
+A Spring container (IoC container)
+
+The main goal of this project is:
+
+👉 To understand Dependency Injection (DI) and Loose Coupling
+
+🎯 THE PROBLEM THIS PROJECT SOLVES
+
+Normally, Java creates objects like this:
+
+Engine e = new PetrolEngine();
+Car car = new Car(e);
+
+
+This is manual wiring → The car is tightly coupled to PetrolEngine.
+
+If tomorrow you want DieselEngine, you must change the code.
+
+❌ Not good
+❌ Not scalable
+❌ Not flexible
+
+🎉 WHAT SPRING DOES IN THIS PROJECT
+
+Spring’s IoC container:
+
+✔️ Creates objects for you
+✔️ Stores them
+✔️ Injects them into other objects
+✔️ Automatically picks the correct engine
+✔️ Removes tight coupling
+
+This is called:
+
+⭐ IoC — Inversion of Control
+⭐ DI — Dependency Injection
+🧱 PROJECT COMPONENTS
+1️⃣ Engine Interface (Parent)
+public interface Engine {
+    void start();
+}
+
+
+This allows loose coupling because Car depends on an interface — NOT a concrete class.
+
+2️⃣ PetrolEngine Class
+@Component
+public class PetrolEngine implements Engine {
+    public void start() {
+        System.out.println("Petrol Engine Starting...");
+    }
+}
+
+3️⃣ DieselEngine Class
+@Component
+public class DieselEngine implements Engine {
+    public void start() {
+        System.out.println("Diesel Engine Starting...");
+    }
+}
+
+4️⃣ Car Class
+@Component
+public class Car {
+
+    private Engine engine;
+
+    @Autowired
+    public Car(@Qualifier("petrolEngine") Engine engine) {
+        this.engine = engine;
+    }
+
+    public void drive() {
+        engine.start();
+        System.out.println("Car is moving...");
+    }
+}
+
+
+Key points:
+
+✔️ Car does NOT create engine object
+✔️ Car receives engine from Spring (DI)
+✔️ Using @Qualifier, you choose WHICH engine
+
+5️⃣ AppConfig
+@Configuration
+@ComponentScan(basePackages = "com.ct")
+public class AppConfig {
+}
+
+
+This tells Spring to automatically find all @Component classes.
+
+6️⃣ MainApp
+public class MainApp {
+    public static void main(String[] args) {
+        AnnotationConfigApplicationContext context =
+                new AnnotationConfigApplicationContext(AppConfig.class);
+
+        Car car = context.getBean(Car.class);
+        car.drive();
+
+        context.close();
+    }
+}
+
+🛠 HOW THE PROJECT RUNS (Step-by-step Flow)
+STEP 1: Spring Container Starts
+new AnnotationConfigApplicationContext(AppConfig.class)
+
+
+Spring scans all classes inside com.ct.
+
+STEP 2: Spring creates beans
+
+Spring sees @Component → creates object (bean)
+
+Creates:
+
+PetrolEngine bean
+
+DieselEngine bean
+
+Car bean
+
+STEP 3: Spring looks at Car’s constructor
+@Autowired
+public Car(@Qualifier("petrolEngine") Engine engine)
+
+
+Spring says:
+
+Car needs an Engine
+
+There are 2 engines: petrol, diesel
+
+@Qualifier tells Spring: “Use petrolEngine”
+
+Spring injects PetrolEngine object into Car
+
+STEP 4: MainApp asks Spring for Car
+Car c = context.getBean(Car.class);
+
+
+Now Car already has PetrolEngine inside it.
+
+STEP 5: Car drives
+Petrol Engine Starting...
+Car is moving...
+
+🚦 WHY YOU GET NoUniqueBeanDefinitionException
+
+Because without @Qualifier, Spring sees:
+
+Two beans of type Engine
+→ petrolEngine
+→ dieselEngine
+
+Spring becomes confused:
+
+📢 “Which one should I use?”
+
+→ So it throws an error.
+
+🧩 Tight Coupling vs Loose Coupling in Your Project
+Type	Example	Good/Bad	Reason
+Tight Coupling	new PetrolEngine() inside Car	❌ Bad	Car depends on specific engine
+Loose Coupling	Car depends on Engine interface + DI	✔️ Good	Engine can be swapped anytime

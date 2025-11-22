@@ -1,0 +1,37 @@
+# Eclipse specific
+.classpath
+.project
+.settings/
+bin/
+
+# STS / Spring Tool Suite
+.springBeans
+
+# Build directories
+build/
+target/
+out/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Compiled Java files
+*.class
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/maven-wrapper.jar
+
+# Backup files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# IntelliJ IDEA (if opened there)
+.idea/
+*.iml
