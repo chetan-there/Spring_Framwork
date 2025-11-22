@@ -1,0 +1,181 @@
+⭐ FULL FLOW EXPLANATION (VERY SIMPLE)
+STEP 1 — App Starts
+
+MainApp starts the Spring container:
+
+AnnotationConfigApplicationContext context =
+                new AnnotationConfigApplicationContext(AppConfig.class);
+
+
+Spring now:
+
+Scans @Configuration, @Bean, @Component
+
+Creates all objects (beans)
+
+Wires the connections using constructor injection
+
+⭐ STEP 2 — Spring Creates These Beans Automatically
+1. PaymentGateway Beans
+
+Because of @Component:
+
+UPIPaymentGateway
+
+CardPaymentGateway
+
+Both objects are created and stored inside the Spring container.
+
+2. DeliveryService Bean
+
+Also created because of @Component.
+
+3. PaymentService Bean
+
+Created using:
+
+public PaymentService(@Qualifier("upiPayment") PaymentGateway paymentGateway)
+
+
+So:
+
+Spring Injects UPI Payment Gateway into PaymentService by default.
+
+4. OrderService Bean
+
+Created using:
+
+public OrderService(PaymentService paymentService, DeliveryService deliveryService)
+
+
+So the OrderService gets:
+
+The PaymentService bean
+
+The DeliveryService bean
+
+Now all required services are READY.
+
+⭐ STEP 3 — Ask User for Payment Choice
+
+Your code asks:
+
+Enter choice
+1 → UPI
+2 → Card
+
+
+User enters input.
+
+Example:
+
+2
+
+⭐ STEP 4 — PaymentService Switches Payment Method
+
+PaymentService checks:
+
+paymentService.switchPaymentMethod(choice);
+
+
+Inside method:
+
+If user chooses 1
+
+➡️ Payment method stays UPI (already the default)
+
+If user chooses 2
+
+➡️ PaymentService sets paymentGateway = cardPaymentGateway
+
+This happens:
+
+paymentGateway = new CardPaymentGateway();
+
+
+So the payment method is updated.
+
+⭐ STEP 5 — OrderService Places the Order
+
+OrderService is called:
+
+orderService.placeOrder();
+
+
+Inside this:
+
+It calls PaymentService
+
+PaymentService prints:
+
+UPI Payment processed
+
+
+or
+
+Card Payment processed
+
+
+Based on user choice.
+
+It then calls DeliveryService
+
+DeliveryService prints:
+
+Delivery agent has been assigned
+
+⭐ STEP 6 — App Ends
+context.close();
+
+
+Spring closes all resources.
+
+⭐ VISUAL FLOW (SUPER EASY DIAGRAM)
+MainApp
+   |
+   ↓
+Spring Container starts
+   |
+   ↓
+Creates beans:
+   UPI Gateway ✓
+   Card Gateway ✓
+   Delivery Service ✓
+   Payment Service (default = UPI) ✓
+   Order Service ✓
+   |
+   ↓
+User chooses payment (1 or 2)
+   |
+   ↓
+PaymentService.switchPaymentMethod()
+   |
+   ↓
+OrderService.placeOrder()
+   |
+   ├── PaymentService.processPayment()
+   |       → "UPI Payment Done" OR "Card Payment Done"
+   |
+   └── DeliveryService.assignDelivery()
+           → "Delivery agent assigned"
+   |
+   ↓
+Application ends
+
+⭐ Final Summary — In Human Language
+
+Spring creates all services (payment + delivery + order).
+
+PaymentService gets UPI as the default payment method.
+
+User selects UPI or Card.
+
+PaymentService changes payment method if needed.
+
+OrderService places the order:
+
+Takes payment
+
+Assigns delivery partner
+
+Program ends.

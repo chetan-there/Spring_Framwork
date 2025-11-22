@@ -1,0 +1,121 @@
+🚗 OrderService
+public OrderService(PaymentService paymentService, DeliveryService deliveryService)
+
+
+This means:
+
+OrderService cannot exist without payment and delivery.
+
+That’s why Spring forces you to give both via constructor.
+
+Constructor injection = must-have items
+
+Example:
+Like a bike needs engine + wheels → without them, bike cannot be made.
+
+💸 PaymentService
+
+Here you have:
+
+👉 Constructor injection
+public PaymentService(@Qualifier("upiPayment") PaymentGateway paymentGateway)
+
+
+Default payment is UPI.
+Spring creates the PaymentService using this.
+
+👉 Setter-style switching
+public void switchPaymentMethod(int choice)
+
+
+This is optional.
+You can switch to Card if user selects Card.
+
+Setter injection = changeable or optional items
+
+Example:
+Bike color can be changed later → it’s optional.
+
+📦 DeliveryService
+
+Delivery service only needs to print that a delivery agent is assigned.
+No injection needed here.
+
+🏁 MainApp
+
+This takes user input:
+
+1 → UPI
+2 → Card
+
+
+Then:
+
+PaymentService switches payment method
+
+OrderService places the order
+
+DeliveryService assigns a delivery partner
+
+Simple real-life workflow.
+
+⭐ 3. WHEN TO USE CONSTRUCTOR vs SETTER INJECTION (VERY IMPORTANT)
+✔ Use Constructor Injection When:
+
+The dependency is mandatory
+
+The object cannot work without it
+
+Good for immutability (values cannot be changed later)
+
+Examples in real life:
+
+Phone needs a battery
+
+Car needs an engine
+
+In your code:
+PaymentService & DeliveryService for OrderService.
+
+✔ Use Setter Injection When:
+
+The dependency is optional
+
+OR it can be changed later
+
+OR sometimes you don't have it at the time of object creation
+
+Examples in real life:
+
+Choosing UPI/Card/Cash at the time of payment
+
+Adding a promo code (optional)
+
+Selecting a discount coupon
+
+In your code:
+switchPaymentMethod(int choice) in PaymentService
+setDiscountCode() in OrderService (if you add it later)
+
+⭐ 4. WHY BOTH ARE USED IN ZOMATO PROJECT?
+✔ PaymentService needs a default payment → Constructor Injection
+
+Because order cannot start without at least one payment method.
+
+✔ User may change payment method → Setter-like method
+
+Because user chooses UPI/Card at runtime.
+
+✔ OrderService MUST have:
+
+PaymentService
+
+DeliveryService
+So → Constructor Injection
+Order cannot be created without these.
+
+⭐ Final Summary for You (16-year old level)
+Injection Type	Meaning	When to Use	Example in Zomato
+Constructor Injection	Must have	Object cannot exist without it	OrderService needs Payment & Delivery
+Setter Injection	Optional / Changeable	Value may change later	Switch between UPI and Card
+Method-based Switch	Runtime decisions	Based on user choice	Choosing payment method in console
