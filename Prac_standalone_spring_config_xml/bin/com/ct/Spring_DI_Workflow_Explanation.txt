@@ -1,0 +1,127 @@
+SPRING DEPENDENCY INJECTION - WORKFLOW EXPLANATION
+===================================================
+
+Project Structure:
+------------------
+App.xml
+com.ct
+ ├── Staff.java
+ ├── Doctor.java
+ ├── Nurse.java
+ ├── MainClass.java
+ 
+
+===================================================
+1. App.xml  (Configuration File)
+---------------------------------------------------
+- This file tells Spring where to scan components (@Component classes)
+- It defines the Doctor bean with property values for Setter Injection.
+
+WORKFLOW:
+    -> Spring Container (ApplicationContext) reads App.xml
+    -> It scans package 'com.ct' to find @Component classes (Doctor, Nurse)
+    -> It also creates bean 'doctor' defined manually with property values
+
+Code:
+<context:component-scan base-package="com.ct" />
+<bean id="doctor" class="com.ct.Doctor">
+    <property name="name" value="Dr. Chetan There" />
+    <property name="qualification" value="MBBS" />
+    <property name="experience" value="5" />
+</bean>
+
+
+===================================================
+2. Doctor.java  (Setter Injection Example)
+---------------------------------------------------
+@Component
+public class Doctor implements Staff {
+    
+    private String name;
+    private String qualification;
+    private int experience;
+
+    // Spring calls these setters automatically to inject property values
+    public void setName(String name) { this.name = name; }
+    public void setQualification(String qualification) { this.qualification = qualification; }
+    public void setExperience(int experience) { this.experience = experience; }
+
+    public void assist() {
+        System.out.println(name + " (Doctor) is assisting");
+    }
+}
+
+WORKFLOW:
+    -> When Spring creates Doctor bean, it calls each setter method
+       with the values defined in App.xml (name, qualification, experience).
+
+
+===================================================
+3. Nurse.java  (Field Injection Example)
+---------------------------------------------------
+@Component
+public class Nurse implements Staff {
+
+    // @Value injects values directly into fields (no setters required)
+    @Value("Nurse Priya")
+    private String name;
+
+    @Value("3")
+    private int experience;
+
+    public void assist() {
+        System.out.println(name + " (Nurse) is assisting — Experience: " + experience + " years");
+    }
+}
+
+WORKFLOW:
+    -> During component scanning, Spring detects @Component Nurse
+    -> It injects field values using @Value annotation
+    -> Object is ready to use
+
+
+===================================================
+4. MainClass.java  (Execution and Bean Retrieval)
+---------------------------------------------------
+public class MainClass {
+    public static void main(String[] args) {
+
+        // Step 1: Load Spring container using XML configuration
+        ApplicationContext context =
+            new ClassPathXmlApplicationContext("App.xml");
+
+        // Step 2: Get the Doctor bean (Setter Injection)
+        Doctor doctor = context.getBean("doctor", Doctor.class);
+        doctor.assist();
+        System.out.println("Name: " + doctor.getName());
+        System.out.println("Qualification: " + doctor.getQualification());
+        System.out.println("Experience: " + doctor.getExperience() + " years");
+
+        // Step 3: Get the Nurse bean (Field Injection)
+        Nurse nurse = context.getBean("nurse", Nurse.class);
+        nurse.assist();
+    }
+}
+
+WORKFLOW:
+    -> Spring reads App.xml → Creates ApplicationContext
+    -> Doctor bean created using setters defined in XML
+    -> Nurse bean created automatically from @Component scan
+    -> Beans are fetched using getBean() method
+    -> Program runs and prints output from both classes
+
+
+===================================================
+OUTPUT:
+---------------------------------------------------
+---- Doctor Bean (Setter Injection) ----
+Dr. Chetan There (Doctor) is assisting
+Name: Dr. Chetan There
+Qualification: MBBS
+Experience: 5 years
+
+---- Nurse Bean (Field Injection) ----
+Nurse Priya (Nurse) is assisting — Experience: 3 years
+
+===================================================
+END OF WORKFLOW EXPLANATION
