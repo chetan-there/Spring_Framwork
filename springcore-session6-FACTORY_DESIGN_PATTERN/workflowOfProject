@@ -1,0 +1,59 @@
+🚀 Factory Design Pattern – Zomato App Workflow (Summary)
+
+Goal:
+Automatically create the correct payment method object (UPI, Card, Wallet) without writing new code in OrderService every time.
+
+Think of Zomato Payment Factory like a kitchen that prepares whatever dish you order.
+You just tell the kitchen → “I want Pizza”
+Kitchen → gives Pizza object.
+
+Same:
+User chooses → “UPI”
+Factory → returns UPI Payment Gateway object
+
+🔥 Factory Flow in Zomato App
+1️ User chooses Payment Method in Console
+
+Example:
+
+Enter Payment Method (UPI/CARD/WALLET):
+
+2️ OrderService sends request to PaymentFactory
+paymentGateway = PaymentFactory.getPayment("UPI")
+
+3️⃣ Factory checks the method
+if (method == "UPI") → return new UpiPayment()
+if (method == "CARD") → return new CardPayment()
+if (method == "WALLET") → return new WalletPayment()
+
+4️ Correct Payment Object is returned
+
+OrderService now receives the correct implementation.
+
+Example:
+
+UPI payment selected
+
+5️ OrderService uses that object
+paymentGateway.pay(amount)
+
+6️ Order continues
+
+Payment successful
+
+Delivery assigned
+
+Discount applied
+
+🧠 WHY FACTORY PATTERN IS USED?
+Problem	Factory Solution
+If new payment method comes (e.g., Crypto), you must modify many files.	Add one new class only and update the factory class.
+Tight coupling	Loose coupling
+Code becomes messy	Clean, maintainable
+🧩 SUMMARY IN 5 LINES
+
+✔ User chooses payment type
+✔ OrderService calls PaymentFactory
+✔ Factory returns correct payment class
+✔ OrderService uses it without knowing details
+✔ Easy to add new payment types in future

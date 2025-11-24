@@ -1,0 +1,34 @@
+✅ 1. Factory Pattern – Explanation 
+
+Imagine you open Zomato and choose payment method:
+“Pay by UPI / Pay by Card / Pay by Wallet”
+Zomato must create the object of the correct payment class.
+
+BUT…
+Your main code should NOT decide which class to create.
+Why?
+
+Because:
+
+❌ If–else everywhere = messy code
+❌ Hard to add new payment types
+✔ Better: Let a “Factory” create correct object for you
+
+So we use:
+
+⭐ Factory = Object–creating machine
+
+Your app asks:
+
+“Give me an object that matches the payment type”
+
+Factory returns:
+
+If user selects UPI → returns UpiPayment
+
+If user selects CARD → returns CardPayment
+
+If user selects WALLET → returns WalletPayment
+
+Your main program does NOT know which class is being created.
+This is the Factory Pattern.
