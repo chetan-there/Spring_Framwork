@@ -1,0 +1,13 @@
+| Topic                      | Strategy Pattern                                                    | Other Design Patterns                                                                              |
+| -------------------------- | --------------------------------------------------------------------| -------------------------------------------------------------------------------------------------- |
+| What it is?                | A behavioral design pattern used to change algorithms at runtime.   | A broad category of patterns used to solve various software problems.                              |
+| Purpose                    | To dynamically switch behaviour (algorithm) without modifying code. | To solve different common problems: object creation, structure, behaviour.                         |
+| Example use-case           | Switching payment method: UPI → Card → Wallet → PayPal.             | Creating objects (Factory), building complex objects (Builder), connecting systems (Adapter), etc. |
+| Key idea                   | Encapsulate multiple algorithms behind one interface.               | Provide solutions for creation, structure, or behaviour.                                           |
+| Coupling Level             | Loose coupling between context and algorithm.                       | Depends on the pattern — may reduce creation logic (Factory) or unify interfaces (Adapter).        |
+| Flexibility                | High — add new strategies without touching main class.              | Varies; some patterns add flexibility, some add structure.                                         |
+| Changes at Runtime         |✔️ YES — user can switch algorithms anytime.                         | ❌ Most design patterns do not support dynamic switching.                                          |
+| How many classes involved? | Context + Strategy Interface + Strategy Implementations.            | Depends — some patterns need many classes, some need very few.                                     |
+| Examples                   | Payment methods, sorting algorithms, authentication methods.        | Singleton, Factory, Builder, Adapter, Observer, Proxy, MVC etc.                                    |
+| When to use                | When you need multiple interchangeable behaviors.                   | When you face a specific software design issue (creation/structure/behavior).                      |
+| Easy to understand?        | ✔️ Yes                                                              | Depends — some patterns are hard (Proxy, Abstract Factory).                                        |

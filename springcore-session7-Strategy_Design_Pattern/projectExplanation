@@ -1,0 +1,183 @@
+🍕 ZOMATO MINI PROJECT – FULL EXPLANATION + WORKFLOW
+📁 Your Project Structure
+com.zomato
+    └── MainApp.java
+
+com.zomato.service
+    ├── OrderService.java
+    ├── DeliveryService.java
+    └── ...
+    
+com.zomato.payment
+    ├── PaymentStrategy.java   (interface)
+    ├── UpiPayment.java
+    ├── CardPayment.java
+    ├── WalletPayment.java
+
+com.zomato.config
+    └── AppConfig.java
+
+🎯 What This Project Demonstrates
+
+This Zomato mini-project teaches:
+
+✔ Strategy Design Pattern
+
+→ dynamic behaviour change at runtime
+(you can switch payment method any time)
+
+✔ Loose Coupling Using Interfaces
+
+OrderService depends on PaymentStrategy (interface)
+NOT on CardPayment, UpiPayment, etc.
+
+✔ Spring Core Concepts
+
+@Component → Bean creation
+
+@Autowired → Dependency Injection
+
+Constructor Injection
+
+Setter Injection
+
+@Qualifier → choose specific bean
+
+AnnotationConfigApplicationContext → start Spring
+
+✔ User Input + Dynamic Behavior
+
+User chooses payment method using console.
+
+🧠 Simple Explanation 
+
+Imagine Zomato.
+
+You want to place an order.
+
+You can pay using:
+
+UPI
+
+Card
+
+Wallet
+
+Each payment method has its own rules, but they all do one thing → process payment.
+
+So we create:
+
+PaymentStrategy (interface)
+
+💬 “Whatever the payment method is, it must have a pay() function.”
+
+UPI, Card, Wallet classes
+
+They follow the same rule:
+
+pay(amount)
+
+🚗 OrderService – The Main Brain
+
+OrderService doesn’t know how the payment works.
+
+It only knows:
+
+“I need SOME payment method that has a pay() method.”
+
+This makes the class super flexible.
+
+We give the object from outside (setter injection) based on what the user chooses.
+
+⚙️ Workflow (Step-By-Step)
+1️⃣ Spring starts
+
+AnnotationConfigApplicationContext(AppConfig.class)
+→ Spring scans all packages
+→ Creates objects (@Component beans)
+
+Beans created automatically:
+
+DeliveryService
+
+UpiPayment
+
+CardPayment
+
+WalletPayment
+
+OrderService
+
+2️⃣ User selects payment method
+
+Console asks:
+
+1. UPI
+2. Card
+3. Wallet
+
+
+You enter: 2
+
+3️⃣ MainApp picks correct Spring Bean
+strategy = context.getBean("cardPayment", PaymentStrategy.class);
+
+
+Now strategy object = CardPayment.
+
+4️⃣ Setter injection updates OrderService
+orderService.setPaymentStrategy(strategy);
+
+
+Now OrderService is using: Card Payment
+
+5️⃣ OrderService.placeOrder() called
+Order placed!
+Payment Done using CardPayment!
+Delivery Agent assigned...
+
+🎯 In One Line: Workflow Summary
+
+Spring loads → user chooses payment → Spring gives the correct strategy → OrderService uses it → delivery assigned.
+
+📌 Why Loose Coupling Is Achieved?
+
+Because OrderService does NOT depend on:
+
+❌ new CardPayment()
+❌ new UpiPayment()
+❌ new WalletPayment()
+
+It depends on:
+
+✔ PaymentStrategy interface
+
+So we can:
+
+Add New Payment Method (PayPal, Crypto, COD)
+
+Remove any method
+
+Modify any method
+
+WITHOUT changing OrderService code.
+
+This is the superpower of Strategy Pattern.
+
+📌 Why We Used Setter Injection?
+
+Because payment can change anytime during runtime.
+
+Example:
+
+User first chooses UPI
+
+Wishes to switch to Card
+→ Setter injection allows this.
+
+Constructor injection is used for things that never change.
+Setter is used for things that can change.
+
+🎉 Final Explanation in One Sentence
+
+Your Zomato app uses Strategy Pattern + Spring DI to dynamically change payment methods at runtime while keeping the OrderService loosely coupled and flexible.
